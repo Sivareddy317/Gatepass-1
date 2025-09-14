@@ -1,0 +1,5 @@
+{
+    "chat.renderRelatedFiles": true,
+    "chat.todoListTool.writeOnly": true,
+    "chat.useChatSessionsForCloudButton": true
+}
