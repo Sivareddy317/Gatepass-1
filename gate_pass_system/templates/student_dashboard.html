@@ -15,6 +15,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f7fa;
             min-height: 100vh;
+            color: #374151;
         }
 
         .header {
@@ -25,7 +26,7 @@
         }
 
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
@@ -57,16 +58,15 @@
         }
 
         .main-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 320px 1fr;
             gap: 30px;
-            margin-bottom: 30px;
         }
 
         .card {
@@ -77,6 +77,10 @@
             border: 1px solid #e5e7eb;
         }
 
+        .right-column .card {
+            margin-bottom: 30px;
+        }
+
         .card h3 {
             color: #333;
             margin-bottom: 20px;
@@ -85,180 +89,148 @@
             padding-bottom: 10px;
         }
 
-        .attendance-alert {
-            border-radius: 8px;
-            padding: 15px;
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .profile-picture {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #f0f0f0;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-header h2 {
+            margin-bottom: 5px;
+            font-size: 20px;
+        }
+
+        .profile-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .profile-body {
+            padding: 25px;
+        }
+        
+        .profile-section {
             margin-bottom: 20px;
+        }
+
+        .profile-section h4 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-item {
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-
-        .attendance-good {
-            background: #d1fae5;
-            border: 2px solid #10b981;
-            color: #065f46;
-        }
-
-        .attendance-warning {
-            background: #fee2e2;
-            border: 2px solid #dc2626;
-            color: #991b1b;
-        }
-
-        .attendance-info {
-            flex: 1;
-        }
-
-        .attendance-percentage {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-
-        .attendance-note {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #374151;
-            font-weight: 500;
-        }
-
-        .form-group input, 
-        .form-group textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            margin-bottom: 10px;
             font-size: 14px;
-            transition: border-color 0.3s;
+        }
+        .info-item .icon {
+            width: 20px;
+            text-align: center;
+            color: #667eea;
         }
 
-        .form-group input:focus, 
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
+        .attendance-value {
+            font-weight: bold;
         }
+        .attendance-good { color: #10b981; }
+        .attendance-warning { color: #dc2626; }
 
-        .btn {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
+        .profile-footer {
+            padding: 0 25px 25px 25px;
+        }
+        
+        .edit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
-            transition: transform 0.2s;
+            transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        .edit-btn:hover {
+            background: #e5e7eb;
         }
 
-        .btn:hover {
-            transform: translateY(-1px);
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 10px 12px; border: 2px solid #e5e7eb;
+            border-radius: 8px; font-size: 14px; transition: border-color 0.3s;
         }
-
-        .requests-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
+        .btn {
+            padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 8px; cursor: pointer;
+            font-weight: 500; transition: transform 0.2s;
         }
-
-        .requests-table th,
-        .requests-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .requests-table th {
-            background: #f9fafb;
-            color: #374151;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .requests-table td {
-            font-size: 14px;
-        }
-
-        .status {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: capitalize;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-approved {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-rejected {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
+        .btn:hover { transform: translateY(-1px); }
+        .requests-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .requests-table th, .requests-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        .requests-table th { background: #f9fafb; font-weight: 600; font-size: 14px; }
+        .requests-table td { font-size: 14px; }
+        .status { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; text-transform: capitalize; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-approved { background: #d1fae5; color: #065f46; }
+        .status-rejected { background: #fee2e2; color: #991b1b; }
         .alert {
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            font-weight: 500;
+            padding: 12px 16px; margin-bottom: 20px; border-radius: 8px;
+            font-weight: 500; position: fixed; top: 90px; right: 20px;
+            z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+        .alert-success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .alert-error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .alert-warning { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .profile-card { margin-bottom: 30px; }
         }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border-left: 4px solid #ffc107;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-
         @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .requests-table {
-                font-size: 12px;
-            }
-
-            .requests-table th,
-            .requests-table td {
-                padding: 8px;
-            }
+            .header-content { flex-direction: column; gap: 15px; }
+            .requests-table { font-size: 12px; }
+            .requests-table th, .requests-table td { padding: 8px; }
         }
     </style>
 </head>
@@ -277,7 +249,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ 'error' if category == 'error' else category }}">
+                    <div class="alert alert-{{ 'error' if category == 'error' else category }}" id="flash-message">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -285,87 +257,131 @@
         {% endwith %}
 
         <div class="dashboard-grid">
-            <div class="card">
-                <h3>📝 Request Gate Pass</h3>
-                
-                {% if attendance is not none %}
-                <div class="attendance-alert {% if attendance < 75 %}attendance-warning{% else %}attendance-good{% endif %}">
-                    <span style="font-size: 24px;">{% if attendance < 75 %}⚠️{% else %}✅{% endif %}</span>
-                    <div class="attendance-info">
-                        <div class="attendance-percentage">Your Attendance: {{ "%.1f"|format(attendance) }}%</div>
-                        {% if attendance < 75 %}
-                        <div class="attendance-note">Low attendance will be visible to approvers</div>
-                        {% else %}
-                        <div class="attendance-note">Good attendance record</div>
-                        {% endif %}
+            <div class="left-column">
+                {% if profile %}
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-picture">
+                            {% if profile.image_file %}
+                                <img src="{{ url_for('static', filename='profile_pics/' + profile.image_file) }}" 
+                                     alt="Profile Picture"
+                                     onerror="this.style.display='none'; this.parentElement.innerHTML = '👤';">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <h2>{{ profile.name }}</h2>
+                        <p>
+                            <span class="icon">💳</span> {{ profile.roll_number }} <br>
+                            <span class="icon">🎓</span> {{ profile.branch }} - {{ profile.year }}rd Year
+                        </p>
+                    </div>
+                    <div class="profile-body">
+                        <div class="profile-section">
+                            <h4>Contact Information</h4>
+                            <div class="info-item">
+                                <span class="icon">📱</span>
+                                <span>{{ profile.student_phone }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon">👨‍👩‍👧</span>
+                                <span>{{ profile.parent_name }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon">📞</span>
+                                <span>{{ profile.parent_phone }} <small>(Not Editable)</small></span>
+                            </div>
+                        </div>
+
+                        <div class="profile-section">
+                            <h4>Attendance</h4>
+                            <div class="info-item">
+                                <span class="icon">📊</span>
+                                <span class="attendance-value {% if profile.attendance < 75 %}attendance-warning{% else %}attendance-good{% endif %}">
+                                    {{ "%.1f"|format(profile.attendance) }}%
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="profile-section">
+                            <h4>Assigned Approver</h4>
+                            <div class="info-item">
+                                <span class="icon">👤</span>
+                                <span>{{ profile.approver }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-footer">
+                        <a href="#" class="edit-btn">📝 Edit Profile</a>
                     </div>
                 </div>
+                {% else %}
+                <div class="card">
+                    <p>Could not load profile information.</p>
+                </div>
                 {% endif %}
-                
-                <form method="POST" action="{{ url_for('submit_request') }}">
-                    <div class="form-group">
-                        <label for="reason">Reason for Exit</label>
-                        <textarea id="reason" name="reason" rows="3" required 
-                                placeholder="e.g., Medical appointment, Family function, Personal work, etc."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="destination">Destination</label>
-                        <input type="text" id="destination" name="destination" required 
-                               placeholder="e.g., City Hospital, Home, Shopping Mall, etc.">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="exit_time">Expected Exit Time</label>
-                        <input type="datetime-local" id="exit_time" name="exit_time" required>
-                    </div>
-                    
-                    <button type="submit" class="btn">Submit Request</button>
-                </form>
             </div>
 
-            <div class="card">
-                <h3>📋 Your Gate Pass Requests</h3>
-                {% if requests %}
-                    <div style="overflow-x: auto;">
-                        <table class="requests-table">
-                            <thead>
-                                <tr>
-                                    <th>Reason</th>
-                                    <th>Destination</th>
-                                    <th>Exit Time</th>
-                                    <th>Status</th>
-                                    <th>Remarks</th>
-                                    <th>Submitted</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for request in requests %}
-                                <tr>
-                                    <td>{{ request[1] }}</td>
-                                    <td>{{ request[2] }}</td>
-                                    <td>{{ request[3] }}</td>
-                                    <td><span class="status status-{{ request[4] }}">{{ request[4] }}</span></td>
-                                    <td>{{ request[5] or '-' }}</td>
-                                    <td>{{ request[6] }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div style="text-align: center; color: #6b7280; padding: 40px 20px;">
-                        <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
-                        <h4 style="margin-bottom: 8px; color: #374151;">No Requests Yet</h4>
-                        <p>Submit your first gate pass request using the form on the left!</p>
-                    </div>
-                {% endif %}
+            <div class="right-column">
+                <div class="card">
+                    <h3>📝 Request Gate Pass</h3>
+                    <form method="POST" action="{{ url_for('submit_request') }}">
+                        <div class="form-group">
+                            <label for="reason">Reason for Exit</label>
+                            <textarea id="reason" name="reason" rows="3" required placeholder="e.g., Medical appointment, Family function, etc."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="destination">Destination</label>
+                            <input type="text" id="destination" name="destination" required placeholder="e.g., City Hospital, Home, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="exit_time">Expected Exit Time</label>
+                            <input type="datetime-local" id="exit_time" name="exit_time" required>
+                        </div>
+                        <button type="submit" class="btn">Submit Request</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>📋 Your Gate Pass Requests</h3>
+                    {% if requests %}
+                        <div style="overflow-x: auto;">
+                            <table class="requests-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reason</th>
+                                        <th>Destination</th>
+                                        <th>Exit Time</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                        <th>Submitted</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for request in requests %}
+                                    <tr>
+                                        <td>{{ request[1] }}</td>
+                                        <td>{{ request[2] }}</td>
+                                        <td>{{ request[3] }}</td>
+                                        <td><span class="status status-{{ request[4] }}">{{ request[4] }}</span></td>
+                                        <td>{{ request[5] or '-' }}</td>
+                                        <td>{{ request[6] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; color: #6b7280; padding: 40px 20px;">
+                            <p>You have not made any requests yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Set minimum datetime to current time
         document.addEventListener('DOMContentLoaded', function() {
             const exitTimeInput = document.getElementById('exit_time');
             if (exitTimeInput) {
@@ -373,33 +389,12 @@
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
                 exitTimeInput.min = now.toISOString().slice(0, 16);
             }
-        });
-
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const reason = document.getElementById('reason').value.trim();
-            const destination = document.getElementById('destination').value.trim();
-            const exitTime = document.getElementById('exit_time').value;
-
-            if (!reason || !destination || !exitTime) {
-                e.preventDefault();
-                alert('Please fill in all required fields.');
-                return;
-            }
-
-            if (reason.length < 10) {
-                e.preventDefault();
-                alert('Please provide a more detailed reason (at least 10 characters).');
-                return;
-            }
-
-            // Check if exit time is in the future
-            const selectedTime = new Date(exitTime);
-            const now = new Date();
-            if (selectedTime <= now) {
-                e.preventDefault();
-                alert('Please select a future date and time for exit.');
-                return;
+            
+            const flashMessage = document.getElementById('flash-message');
+            if(flashMessage) {
+                setTimeout(() => {
+                    flashMessage.style.display = 'none';
+                }, 5000);
             }
         });
     </script>

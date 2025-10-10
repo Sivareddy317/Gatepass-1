@@ -2,7 +2,7 @@
 """
 College Gate Pass Management System
 Simplified with 2 Students and Fixed Admin Dashboard
-** Updated with Attendance Upload and Patched Search **
+** Updated with Student Profile Card and Pictures **
 """
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, make_response
@@ -28,6 +28,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 # Create directories
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs('templates', exist_ok=True)
+os.makedirs('static/profile_pics', exist_ok=True) # Ensure profile pics folder exists
 
 def init_db():
     """Initialize database with minimal setup"""
@@ -40,7 +41,7 @@ def init_db():
         c.execute('DROP TABLE IF EXISTS gate_passes')
         c.execute('DROP TABLE IF EXISTS attendance')
         
-        # Users table
+        # Users table - **MODIFIED SCHEMA**
         c.execute('''CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT UNIQUE NOT NULL,
@@ -48,6 +49,12 @@ def init_db():
             role TEXT NOT NULL,
             name TEXT,
             roll_number TEXT,
+            branch TEXT,
+            year INTEGER,
+            student_phone TEXT,
+            parent_name TEXT,
+            parent_phone TEXT,
+            profile_image TEXT,
             assigned_range_start TEXT,
             assigned_range_end TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -81,24 +88,22 @@ def init_db():
             uploaded_by TEXT
         )''')
         
-        # Insert only 2 students and staff
-        sample_users = [
-            # Just 2 students as requested
-            ('232P1A3317@cbit.edu.in', '232P1A3317', 'student', 'Neha Chopra', '232P1A3317'),
-            ('232P1A3346@cbit.edu.in', '232P1A3346', 'student', 'Abhimanyu Rao', '232P1A3346'),
-            
-            # Staff
-            ('approver1@cbit.edu.in', '9182302896', 'approver', 'Mr. Krupasagar', None),
-            ('approver2@cbit.edu.in', '9876543210', 'approver', 'Dr. Priya Sharma', None),
-            ('security1@cbit.edu.in', '9573239692', 'security', 'Security Officer', None),
-            ('admin1@cbit.edu.in', '6300933471', 'admin', 'System Admin', None)
-        ]
+        # Insert users - **MODIFIED DATA**
+        c.execute('''INSERT INTO users 
+                     (email, password, role, name, roll_number, branch, year, student_phone, parent_name, parent_phone, profile_image) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
+                  ('232p1a3317@cbit.edu.in', '232P1A3317', 'student', 'K. Siva Prasad Reddy', '232P1A3317', 'CSE-AIML', 3, '9876543210', 'Mr. K. Reddy', '9876543211', '232P1A3317.jpg'))
         
-        for user_data in sample_users:
-            c.execute('''INSERT INTO users 
-                         (email, password, role, name, roll_number) 
-                         VALUES (?, ?, ?, ?, ?)''', user_data)
-        
+        c.execute('''INSERT INTO users 
+                     (email, password, role, name, roll_number, branch, year, student_phone, parent_name, parent_phone, profile_image) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                  ('232p1a3346@cbit.edu.in', '232P1A3346', 'student', 'Abhimanyu Rao', '232P1A3346', 'IT', 2, '8765432109', 'Mr. S. Rao', '8765432108', '232P1A3346.png'))
+
+        c.execute('''INSERT INTO users (email, password, role, name) VALUES (?, ?, ?, ?)''', ('approver1@cbit.edu.in', '9182302896', 'approver', 'Dr. John Smith'))
+        c.execute('''INSERT INTO users (email, password, role, name) VALUES (?, ?, ?, ?)''', ('approver2@cbit.edu.in', '9876543210', 'approver', 'Dr. Priya Sharma'))
+        c.execute('''INSERT INTO users (email, password, role, name) VALUES (?, ?, ?, ?)''', ('security1@cbit.edu.in', '9573239692', 'security', 'Security Officer'))
+        c.execute('''INSERT INTO users (email, password, role, name) VALUES (?, ?, ?, ?)''', ('admin1@cbit.edu.in', '6300933471', 'admin', 'System Admin'))
+
         # Set approver assignments
         c.execute('''UPDATE users SET assigned_range_start = '232P1A3317', assigned_range_end = '232P1A3317' 
                      WHERE email = 'approver1@cbit.edu.in' ''')
@@ -106,27 +111,20 @@ def init_db():
                      WHERE email = 'approver2@cbit.edu.in' ''')
         
         # Insert attendance for both students
-        c.execute('INSERT INTO attendance (roll_number, percentage, uploaded_by) VALUES (?, ?, ?)', 
-                 ('232P1A3317', 85.5, 'system'))
-        c.execute('INSERT INTO attendance (roll_number, percentage, uploaded_by) VALUES (?, ?, ?)', 
-                 ('232P1A3346', 72.3, 'system'))
+        c.execute('INSERT INTO attendance (roll_number, percentage, uploaded_by) VALUES (?, ?, ?)', ('232P1A3317', 85.5, 'system'))
+        c.execute('INSERT INTO attendance (roll_number, percentage, uploaded_by) VALUES (?, ?, ?)', ('232P1A3346', 72.3, 'system'))
         
         # Insert sample gate pass request for testing
         c.execute('''INSERT INTO gate_passes 
                      (student_email, student_name, roll_number, reason, destination, exit_time, approver_email, status) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                 ('232P1A3317@cbit.edu.in', 'Neha Chopra', '232P1A3317', 
+                 ('232p1a3317@cbit.edu.in', 'K. Siva Prasad Reddy', '232P1A3317', 
                   'Medical appointment', 'City Hospital', '2025-09-14T15:46', 'approver1@cbit.edu.in', 'approved'))
         
         conn.commit()
         conn.close()
         
-        logger.info("✅ Database initialized with 2 students and sample data")
-        print("✅ Database setup complete:")
-        print("   - 2 students: 232P1A3317, 232P1A3346")
-        print("   - 2 approvers, 1 security, 1 admin")
-        print("   - Sample attendance data")
-        print("   - 1 sample gate pass request")
+        logger.info("✅ Database initialized with profile image support.")
         
     except Exception as e:
         logger.error(f"❌ Database initialization failed: {e}")
@@ -171,8 +169,6 @@ def login():
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '').strip()
         
-        logger.info(f"Login attempt: {email}")
-        
         if not email or not password:
             flash('Please enter both email and password', 'error')
             return render_template('login.html')
@@ -190,7 +186,6 @@ def login():
                 session['user_role'] = user[3]
                 session['user_name'] = user[4]
                 
-                logger.info(f"✅ Login successful: {user[1]} as {user[3]}")
                 flash(f'Welcome, {user[4]}!', 'success')
                 
                 if user[3] == 'student':
@@ -202,11 +197,9 @@ def login():
                 elif user[3] == 'admin':
                     return redirect(url_for('admin_dashboard'))
             else:
-                logger.warning(f"❌ Login failed: {email}")
                 flash('Invalid email or password', 'error')
                 
         except Exception as e:
-            logger.error(f'Login error: {e}')
             flash('Login error occurred', 'error')
     
     return render_template('login.html')
@@ -223,6 +216,7 @@ def logout():
 def student_dashboard():
     try:
         conn = sqlite3.connect('gate_pass.db')
+        conn.row_factory = sqlite3.Row 
         c = conn.cursor()
         
         c.execute('''SELECT id, reason, destination, exit_time, status, 
@@ -231,22 +225,42 @@ def student_dashboard():
                      ORDER BY created_at DESC''', (session['user_email'],))
         requests = c.fetchall()
         
-        c.execute('SELECT roll_number FROM users WHERE email = ?', (session['user_email'],))
+        c.execute('SELECT * FROM users WHERE email = ?', (session['user_email'],))
         student_data = c.fetchone()
         
-        attendance = None
-        if student_data:
-            c.execute('''SELECT percentage FROM attendance WHERE roll_number = ?''', (student_data[0],))
-            attendance_data = c.fetchone()
-            if attendance_data:
-                attendance = attendance_data[0]
+        if not student_data:
+            flash("Could not find student profile.", "error")
+            return redirect(url_for('logout'))
+
+        student_roll = student_data['roll_number']
+        
+        c.execute('SELECT percentage FROM attendance WHERE roll_number = ?', (student_roll,))
+        attendance_data = c.fetchone()
+        
+        c.execute('''SELECT name FROM users WHERE role = 'approver' 
+                     AND ? BETWEEN assigned_range_start AND assigned_range_end''', (student_roll,))
+        approver_data = c.fetchone()
+        
+        profile_data = {
+            'name': student_data['name'],
+            'roll_number': student_data['roll_number'],
+            'branch': student_data['branch'],
+            'year': student_data['year'],
+            'student_phone': student_data['student_phone'],
+            'parent_name': student_data['parent_name'],
+            'parent_phone': student_data['parent_phone'],
+            'image_file': student_data['profile_image'],
+            'attendance': attendance_data['percentage'] if attendance_data else 0,
+            'approver': approver_data['name'] if approver_data else 'Not Assigned'
+        }
         
         conn.close()
-        return render_template('student_dashboard.html', requests=requests, attendance=attendance)
+        return render_template('student_dashboard.html', requests=requests, profile=profile_data)
     
     except Exception as e:
         logger.error(f'Student dashboard error: {e}')
-        return render_template('student_dashboard.html', requests=[], attendance=None)
+        flash("An error occurred while loading the dashboard.", "error")
+        return render_template('student_dashboard.html', requests=[], profile=None)
 
 @app.route('/student/request', methods=['POST'])
 @login_required
@@ -372,7 +386,6 @@ def security_dashboard():
         conn = sqlite3.connect('gate_pass.db')
         c = conn.cursor()
         
-        # Passes that need action (approved but not exited, or exited but not returned)
         c.execute('''SELECT id, student_name, roll_number, reason, destination, 
                             exit_time, security_action, exit_marked_at, 
                             return_marked_at
@@ -381,7 +394,6 @@ def security_dashboard():
                      ORDER BY exit_time ASC''')
         active_passes = c.fetchall()
         
-        # History of passes that have been fully processed (returned)
         c.execute('''SELECT id, student_name, roll_number, reason, destination, 
                             exit_time, security_action, exit_marked_at, 
                             return_marked_at
@@ -434,7 +446,6 @@ def security_action():
 @login_required
 @role_required('security')
 def download_security_history():
-    """Generates and serves a CSV file of all processed gate passes for security."""
     try:
         conn = sqlite3.connect('gate_pass.db')
         c = conn.cursor()
@@ -474,12 +485,10 @@ def download_security_history():
 @login_required
 @role_required('admin')
 def admin_dashboard():
-    """Fixed admin dashboard with proper data handling"""
     try:
         conn = sqlite3.connect('gate_pass.db')
         c = conn.cursor()
         
-        # Get statistics with proper error handling
         c.execute('SELECT COUNT(*) FROM gate_passes WHERE status = "pending"')
         pending_count = (c.fetchone() or [0])[0]
             
@@ -495,19 +504,16 @@ def admin_dashboard():
         c.execute('SELECT COUNT(*) FROM attendance WHERE percentage < 75')
         low_attendance_count = (c.fetchone() or [0])[0]
         
-        # Get all users
         c.execute('''SELECT id, email, role, name, roll_number, 
                             assigned_range_start, assigned_range_end 
                      FROM users ORDER BY role, email''')
         users = c.fetchall()
         
-        # Get ALL gate pass requests for history
         c.execute('''SELECT id, student_name, roll_number, reason, status, approver_email, 
                             security_action, created_at, exit_marked_at, return_marked_at
                      FROM gate_passes ORDER BY created_at DESC''')
         gate_pass_history = c.fetchall()
         
-        # Get attendance data
         c.execute('''SELECT u.roll_number, u.name, COALESCE(a.percentage, 0) as attendance, 
                             a.last_updated
                      FROM users u
@@ -517,7 +523,6 @@ def admin_dashboard():
         
         conn.close()
         
-        logger.info(f"Admin dashboard data loaded: {student_count} students, {len(users)} total users")
         try:
             return render_template('admin_dashboard.html',
                                  pending_count=pending_count,
@@ -542,7 +547,6 @@ def admin_dashboard():
 @login_required
 @role_required('admin')
 def download_admin_history():
-    """Generates and serves a CSV file of all gate pass history for admin."""
     try:
         conn = sqlite3.connect('gate_pass.db')
         c = conn.cursor()
@@ -579,7 +583,6 @@ def download_admin_history():
 @login_required
 @role_required('admin')
 def add_user():
-    """Add new user via admin dashboard"""
     try:
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
@@ -610,12 +613,10 @@ def add_user():
         conn.close()
         
         flash(f'{role.title()} {name} added successfully!', 'success')
-        logger.info(f"User added: {email} as {role}")
         
     except sqlite3.IntegrityError:
         flash('Email already exists!', 'error')
     except Exception as e:
-        logger.error(f'Add user error: {e}')
         flash('Error adding user', 'error')
     
     return redirect(url_for('admin_dashboard'))
@@ -637,7 +638,6 @@ def upload_attendance():
         try:
             df = pd.read_csv(file)
             
-            # UPDATED CODE: Allow for either 'percentage' or 'attendance' as the column name
             if 'percentage' in df.columns:
                 percentage_col = 'percentage'
             elif 'attendance' in df.columns:
@@ -656,9 +656,8 @@ def upload_attendance():
             updated_count = 0
             for index, row in df.iterrows():
                 roll_number = str(row['roll_number'])
-                percentage = float(row[percentage_col]) # Use the detected column name
+                percentage = float(row[percentage_col])
                 
-                # Using INSERT OR REPLACE to either update existing or insert new attendance record
                 c.execute('''INSERT OR REPLACE INTO attendance (roll_number, percentage, uploaded_by, last_updated)
                              VALUES (?, ?, ?, CURRENT_TIMESTAMP)''', 
                           (roll_number, percentage, session['user_email']))
@@ -668,10 +667,8 @@ def upload_attendance():
             conn.close()
             
             flash(f'Successfully uploaded and processed {updated_count} attendance records.', 'success')
-            logger.info(f"Admin {session['user_email']} uploaded attendance for {updated_count} students.")
 
         except Exception as e:
-            logger.error(f'Error processing attendance file: {e}')
             flash(f'An error occurred while processing the file: {e}', 'error')
     else:
         flash('Invalid file format. Please upload a CSV file.', 'error')
@@ -679,7 +676,6 @@ def upload_attendance():
     return redirect(url_for('admin_dashboard'))
 
 def _get_attendance_by_roll(roll_number):
-    """Helper function to get attendance data from the database."""
     try:
         conn = sqlite3.connect('gate_pass.db')
         c = conn.cursor()
@@ -695,17 +691,9 @@ def _get_attendance_by_roll(roll_number):
         conn.close()
         
         if result:
-            return {
-                'roll_number': result[0],
-                'name': result[1],
-                'email': result[2],
-                'attendance': result[3],
-                'last_updated': result[4] or 'Never',
-            }
-        else:
-            return None
+            return { 'roll_number': result[0], 'name': result[1], 'email': result[2], 'attendance': result[3], 'last_updated': result[4] or 'Never' }
+        return None
     except Exception as e:
-        logger.error(f'Database error in _get_attendance_by_roll: {e}')
         return None
 
 @app.route('/admin/search_attendance')
@@ -720,10 +708,8 @@ def search_attendance():
     
     if student_data:
         return jsonify(student_data)
-    elif student_data is None:
-        return jsonify({'error': 'Student not found'}), 404
     else:
-        return jsonify({'error': 'An internal error occurred'}), 500
+        return jsonify({'error': 'Student not found'}), 404
 
 @app.route('/approver/search_attendance')
 @login_required
@@ -737,10 +723,8 @@ def approver_search_attendance():
     
     if student_data:
         return jsonify(student_data)
-    elif student_data is None:
-        return jsonify({'error': 'Student not found'}), 404
     else:
-        return jsonify({'error': 'An internal error occurred'}), 500
+        return jsonify({'error': 'Student not found'}), 404
 
 # Template functions
 @app.template_global()
@@ -758,16 +742,11 @@ if __name__ == '__main__':
     print("=" * 55)
     print("Server starting at http://localhost:5000")
     print("\n📧 WORKING Credentials:")
-    print("Student 1: 232P1A3317@cbit.edu.in / 232P1A3317")
-    print("Student 2: 232P1A3346@cbit.edu.in / 232P1A3346")
+    print("Student 1 (Profile Demo): 232p1a3317@cbit.edu.in / 232P1A3317")
+    print("Student 2: 232p1a3346@cbit.edu.in / 232P1A3346")
     print("Approver 1: approver1@cbit.edu.in / 9182302896")
     print("Approver 2: approver2@cbit.edu.in / 9876543210")  
     print("Security: security1@cbit.edu.in / 9573239692")
     print("Admin: admin1@cbit.edu.in / 6300933471")
-    print("\n✅ Features:")
-    print("- 2 students with attendance data")
-    print("- Working admin dashboard with user management")
-    print("- Sample gate pass request for testing")
-    print("- Add more users via admin dashboard")
     
     app.run(debug=True, host='0.0.0.0', port=5000)
